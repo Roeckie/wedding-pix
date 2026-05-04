@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Share a Memory 💍</title>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
 
@@ -52,17 +53,6 @@
       z-index: -1;
     }
 
-    /* Decorative top flourish */
-    .flourish {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: fadein 1s 0.1s ease forwards;
-    }
-
-    .flourish svg { width: 120px; opacity: 0.35; }
-
-    /* Card */
     .card {
       background: var(--white);
       border: 1px solid var(--border);
@@ -72,406 +62,196 @@
       max-width: 420px;
       text-align: center;
       box-shadow: 0 4px 24px rgba(44,36,32,0.07);
-      opacity: 0;
-      animation: fadein 0.8s 0.2s ease forwards;
-    }
-
-    @keyframes fadein {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .eyebrow {
-      font-size: 0.65rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 500;
-      margin-bottom: 0.75rem;
     }
 
     h1 {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 2.6rem;
+      font-size: 2.4rem;
       font-weight: 300;
-      line-height: 1.15;
-      color: var(--ink);
-      margin-bottom: 0.4rem;
-    }
-
-    h1 em {
-      font-style: italic;
-      color: var(--gold);
-    }
-
-    .names {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem;
-      font-style: italic;
-      color: var(--muted);
       margin-bottom: 0.5rem;
     }
 
     .subtext {
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       color: var(--muted);
-      line-height: 1.65;
-      font-weight: 300;
       margin-bottom: 1rem;
     }
 
-    /* Thin gold divider */
-    .divider-line {
-      width: 48px;
-      height: 1px;
-      background: var(--gold);
-      margin: 0 auto 2rem;
-      opacity: 0.5;
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      cursor: pointer;
+      margin-top: 0.8rem;
     }
 
-    /* Hidden inputs */
-    #camera-input, #gallery-input { display: none; }
-
-    /* Buttons */
     .btn-camera {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      width: 100%;
-      padding: 1rem 1.5rem;
       background: var(--ink);
       color: white;
-      border: none;
-      border-radius: 2px;
-      font-family: 'Jost', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 400;
-      letter-spacing: 0.06em;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-    }
-    .btn-camera:hover  { background: #3e342f; }
-    .btn-camera:active { transform: scale(0.985); }
-
-    .or-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin: 1rem 0;
-      color: var(--muted);
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-    }
-    .or-row::before, .or-row::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
     }
 
     .btn-gallery {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-      padding: 0.75rem 1.5rem;
       background: transparent;
-      color: var(--muted);
       border: 1px solid var(--border);
-      border-radius: 2px;
-      font-family: 'Jost', sans-serif;
-      font-size: 0.82rem;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
+      color: var(--muted);
     }
-    .btn-gallery:hover { border-color: var(--ink); color: var(--ink); }
 
-    /* Preview section */
-    .preview-section {
-      display: none;
-      margin-top: 1.75rem;
-      flex-direction: column;
-      gap: 1rem;
-      text-align: left;
-    }
-    .preview-section.visible { display: flex; }
+    #camera-input, #gallery-input { display: none; }
+
+    .preview-section { display: none; margin-top: 1rem; }
+    .preview-section.visible { display: block; }
 
     .preview-wrap {
-      border-radius: 2px;
+      aspect-ratio: 4/3;
       overflow: hidden;
       background: var(--gold-light);
-      aspect-ratio: 4/3;
-      animation: fadein 0.4s ease both;
+      margin-bottom: 1rem;
     }
+
     .preview-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
     }
 
-    /* Progress */
     .progress-track {
       height: 2px;
       background: var(--border);
-      border-radius: 99px;
-      overflow: hidden;
       display: none;
     }
     .progress-track.active { display: block; }
+
     .progress-fill {
       height: 100%;
       width: 0%;
       background: var(--gold);
-      border-radius: 99px;
-      transition: width 0.3s ease;
     }
 
-    /* Status messages */
-    .status-uploading {
+    .status {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
       display: none;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-      font-weight: 300;
     }
-    .status-uploading.visible { display: flex; }
 
-    .spinner {
-      width: 14px; height: 14px;
-      border: 2px solid var(--border);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .status.visible { display: block; }
 
-    .status-success {
-      display: none;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.75rem 1rem;
-      background: var(--success-bg);
-      border: 1px solid #c3dbc9;
-      border-radius: 2px;
-      font-size: 0.82rem;
-      color: var(--success);
-      animation: fadein 0.3s ease;
-    }
-    .status-success.visible { display: flex; }
+    .success { color: var(--success); }
+    .error { color: #a03820; }
 
-    .status-error {
-      display: none;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.75rem 1rem;
-      background: #fdf0ed;
-      border: 1px solid #f0c4b8;
-      border-radius: 2px;
-      font-size: 0.82rem;
-      color: #a03820;
-      animation: fadein 0.3s ease;
-    }
-    .status-error.visible { display: flex; }
-
-    .btn-another {
-      background: none;
-      border: none;
-      font-family: 'Jost', sans-serif;
-      font-size: 0.78rem;
-      color: var(--muted);
-      cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      text-align: center;
-      padding: 0;
-      width: 100%;
-    }
-    .btn-another:hover { color: var(--ink); }
-
-    /* Footer */
-    .footer {
-      margin-top: 1rem;
-      font-size: 0.7rem;
-      color: var(--muted);
-      text-align: center;
-      letter-spacing: 0.04em;
-      opacity: 0;
-      animation: fadein 1s 0.5s ease forwards;
-    }
   </style>
 </head>
+
 <body>
 
-  <!-- Decorative rings SVG -->
-  <div class="flourish">
-    <svg viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="40" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
-      <circle cx="80" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
-    </svg>
-  </div>
+<div class="card">
+  <h1>Share a Memory 💍</h1>
+  <p class="subtext">Take or upload a photo</p>
 
-  <div class="card">
-    <p class="eyebrow">You're invited to share</p>
-    <h1>A <em>memory</em><br>from today</h1>
-    <p class="names">Ine &amp; Simon · 13th June 2026</p>
-    <div class="divider-line"></div>
-    <p class="subtext">Help ons deze avond nooit te vergeten!</p>
-    <p class="subtext">Neem of upload een foto, geen app of account nodig!</p>
+  <input type="file" id="camera-input" accept="image/*" capture="environment">
+  <input type="file" id="gallery-input" accept="image/*">
 
-    <input type="file" id="camera-input"  accept="image/*" capture="environment" />
-    <input type="file" id="gallery-input" accept="image/*" />
+  <button class="btn btn-camera" onclick="cameraInput.click()">Take Photo</button>
+  <button class="btn btn-gallery" onclick="galleryInput.click()">Upload from Gallery</button>
 
-    <button class="btn-camera" onclick="document.getElementById('camera-input').click()">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-        <circle cx="12" cy="13" r="4"/>
-      </svg>
-      Take a Photo
-    </button>
-
-    <div class="or-row">or</div>
-
-    <button class="btn-gallery" onclick="document.getElementById('gallery-input').click()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-        <polyline points="21 15 16 10 5 21"/>
-      </svg>
-      Upload from gallery
-    </button>
-
-    <!-- Preview + status -->
-    <div class="preview-section" id="preview-section">
-      <div class="preview-wrap">
-        <img id="preview-img" src="" alt="Your photo preview" />
-      </div>
-
-      <div class="progress-track" id="progress-track">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
-
-      <div class="status-uploading" id="status-uploading">
-        <div class="spinner"></div>
-        Uploading your photo…
-      </div>
-
-      <div class="status-success" id="status-success">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Saved to the album — thank you! 🎉
-      </div>
-
-      <div class="status-error" id="status-error">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span id="error-msg">Upload failed. Please try again.</span>
-      </div>
-
-      <button class="btn-another" id="btn-another">Share another photo</button>
+  <div class="preview-section" id="preview-section">
+    <div class="preview-wrap">
+      <img id="preview-img" />
     </div>
+
+    <div class="progress-track" id="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <div class="status" id="status-uploading">Uploading...</div>
+    <div class="status success" id="status-success">Uploaded successfully 🎉</div>
+    <div class="status error" id="status-error">Upload failed</div>
   </div>
+</div>
 
-  <p class="footer">Foto's gaan rechtstreeks naar een Google Drive folder!</p>
-  <p class="footer">Made with love by Simon De Roeck</p>
+<script>
+const CLOUD_NAME = 'dzvstnapa';
+const UPLOAD_PRESET = 'rn2ysjxt';
+const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
-  <script>
-    // ─────────────────────────────────────────────
-    // 👇 PASTE YOUR GOOGLE APPS SCRIPT URL HERE
-    // ─────────────────────────────────────────────
-    const UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbw0gcpx0ThmVvKsSJ7Y4cC1kVi7xS-DwgRu4hjPNYNR6LTX8DkDVYodQ8n0Ixvt4Mik/exec';
-    // ─────────────────────────────────────────────
+const cameraInput = document.getElementById('camera-input');
+const galleryInput = document.getElementById('gallery-input');
 
-    const cameraInput   = document.getElementById('camera-input');
-    const galleryInput  = document.getElementById('gallery-input');
-    const previewSection= document.getElementById('preview-section');
-    const previewImg    = document.getElementById('preview-img');
-    const progressTrack = document.getElementById('progress-track');
-    const progressFill  = document.getElementById('progress-fill');
-    const statusUploading = document.getElementById('status-uploading');
-    const statusSuccess = document.getElementById('status-success');
-    const statusError   = document.getElementById('status-error');
-    const errorMsg      = document.getElementById('error-msg');
-    const btnAnother    = document.getElementById('btn-another');
+const previewSection = document.getElementById('preview-section');
+const previewImg = document.getElementById('preview-img');
 
-    function resetStatus() {
-      progressTrack.classList.remove('active');
-      progressFill.style.width = '0%';
-      statusUploading.classList.remove('visible');
-      statusSuccess.classList.remove('visible');
-      statusError.classList.remove('visible');
-    }
+const progressTrack = document.getElementById('progress-track');
+const progressFill = document.getElementById('progress-fill');
 
-    function handleFile(file) {
-      if (!file) return;
-      resetStatus();
+const statusUploading = document.getElementById('status-uploading');
+const statusSuccess = document.getElementById('status-success');
+const statusError = document.getElementById('status-error');
 
-      const reader = new FileReader();
-      reader.onload = e => {
-        previewImg.src = e.target.result;
-        previewSection.classList.add('visible');
-        uploadFile(file, e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
+function reset() {
+  statusUploading.classList.remove('visible');
+  statusSuccess.classList.remove('visible');
+  statusError.classList.remove('visible');
+  progressTrack.classList.remove('active');
+  progressFill.style.width = '0%';
+}
 
-    async function uploadFile(file, dataUrl) {
-      resetStatus();
-      progressTrack.classList.add('active');
-      statusUploading.classList.add('visible');
+function handleFile(file) {
+  if (!file) return;
 
-      // Animate progress bar
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += Math.random() * 15;
-        if (progress > 85) progress = 85;
-        progressFill.style.width = progress + '%';
-      }, 250);
+  const reader = new FileReader();
+  reader.onload = e => {
+    previewImg.src = e.target.result;
+    previewSection.classList.add('visible');
+    uploadFile(file);
+  };
+  reader.readAsDataURL(file);
+}
 
-      try {
-        const base64 = dataUrl.split(',')[1];
-        const filename = file.name || ('wedding-photo-' + Date.now() + '.jpg');
+async function uploadFile(file) {
+  reset();
+  progressTrack.classList.add('active');
+  statusUploading.classList.add('visible');
 
-        const body = new URLSearchParams({
-          data: base64,
-          mimeType: file.type || 'image/jpeg',
-          filename: filename
-        });
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 20;
+    if (progress > 85) progress = 85;
+    progressFill.style.width = progress + '%';
+  }, 200);
 
-        const res = await fetch(UPLOAD_URL, { method: 'POST', body });
-        const json = await res.json();
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
 
-        if (!json.success) throw new Error(json.error || 'Upload failed');
-
-        clearInterval(interval);
-        progressFill.style.width = '100%';
-        setTimeout(() => {
-          progressTrack.classList.remove('active');
-          statusUploading.classList.remove('visible');
-          statusSuccess.classList.add('visible');
-        }, 300);
-
-      } catch (err) {
-        clearInterval(interval);
-        progressTrack.classList.remove('active');
-        statusUploading.classList.remove('visible');
-        errorMsg.textContent = UPLOAD_URL === 'YOUR_APPS_SCRIPT_URL_HERE'
-          ? 'No upload URL set yet — see setup instructions.'
-          : 'Upload failed. Please try again.';
-        statusError.classList.add('visible');
-      }
-    }
-
-    cameraInput.addEventListener('change',  e => handleFile(e.target.files[0]));
-    galleryInput.addEventListener('change', e => handleFile(e.target.files[0]));
-
-    btnAnother.addEventListener('click', () => {
-      cameraInput.value = '';
-      galleryInput.value = '';
-      previewSection.classList.remove('visible');
-      previewImg.src = '';
-      resetStatus();
+    const res = await fetch(CLOUDINARY_URL, {
+      method: 'POST',
+      body: formData
     });
-  </script>
+
+    const data = await res.json();
+
+    if (!data.secure_url) throw new Error('Upload failed');
+
+    clearInterval(interval);
+    progressFill.style.width = '100%';
+
+    setTimeout(() => {
+      statusUploading.classList.remove('visible');
+      statusSuccess.classList.add('visible');
+    }, 300);
+
+    console.log('Uploaded:', data.secure_url);
+
+  } catch (err) {
+    clearInterval(interval);
+    statusUploading.classList.remove('visible');
+    statusError.classList.add('visible');
+  }
+}
+
+cameraInput.addEventListener('change', e => handleFile(e.target.files[0]));
+galleryInput.addEventListener('change', e => handleFile(e.target.files[0]));
+</script>
+
 </body>
 </html>
