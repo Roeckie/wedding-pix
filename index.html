@@ -1,217 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Share a Memory 💍</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Share a Memory 💍</title>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
 
-:root {
-  --cream: #fdf9f4;
-  --white: #ffffff;
-  --gold: #b8966e;
-  --gold-light: #f0e6d8;
-  --ink: #2c2420;
-  --muted: #9c8e86;
-  --border: #e8ddd4;
-  --success: #4a7c59;
-  --success-bg: #edf4ef;
-}
+    :root {
+      --cream: #fdf9f4;
+      --white: #ffffff;
+      --gold: #b8966e;
+      --gold-light: #f0e6d8;
+      --ink: #2c2420;
+      --muted: #9c8e86;
+      --border: #e8ddd4;
+      --success: #4a7c59;
+      --success-bg: #edf4ef;
+    }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body {
-  font-family: 'Jost', sans-serif;
-  background: var(--cream);
-  color: var(--ink);
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1.25rem 3rem;
-  position: relative;
-}
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.25rem 3rem;
+      position: relative;
+    }
 
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: url('background.jpg') center / cover no-repeat;
-  filter: blur(12px);
-  transform: scale(1.05);
-  z-index: -1;
-}
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: url('background.jpg') center/cover no-repeat;
+      filter: blur(12px);
+      transform: scale(1.05);
+      z-index: -1;
+    }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: rgba(253, 249, 244, 0.45);
-  z-index: -1;
-}
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(253, 249, 244, 0.45);
+      z-index: -1;
+    }
 
-.flourish {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  opacity: 0.35;
-}
+    .flourish {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadein 1s ease forwards;
+    }
 
-.flourish svg { width: 120px; }
+    .flourish svg {
+      width: 120px;
+      opacity: 0.35;
+    }
 
-.card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  padding: 2.5rem 2rem;
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
-  box-shadow: 0 4px 24px rgba(44,36,32,0.07);
-}
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(44,36,32,0.07);
+      animation: fadein 0.8s ease forwards;
+    }
 
-h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.6rem;
-  font-weight: 300;
-  margin-bottom: 0.4rem;
-}
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-h1 em { color: var(--gold); }
+    .eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
 
-.subtext {
-  font-size: 0.82rem;
-  color: var(--muted);
-  margin-bottom: 1rem;
-}
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.6rem;
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 0.4rem;
+    }
 
-.divider-line {
-  width: 48px;
-  height: 1px;
-  background: var(--gold);
-  margin: 0 auto 2rem;
-  opacity: 0.5;
-}
+    h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
 
-#camera-input, #gallery-input {
-  display: none;
-}
+    .names {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
 
-.btn-camera, .btn-gallery {
-  width: 100%;
-  padding: 1rem;
-  border-radius: 2px;
-  cursor: pointer;
-}
+    .subtext {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
 
-.btn-camera {
-  background: var(--ink);
-  color: white;
-  border: none;
-}
+    .divider-line {
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+      margin: 0 auto 2rem;
+      opacity: 0.5;
+    }
 
-.btn-gallery {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  margin-top: 10px;
-}
+    #camera-input,
+    #gallery-input {
+      display: none;
+    }
 
-.queue {
-  text-align: left;
-  margin-top: 1rem;
-  font-size: 0.75rem;
-  color: var(--muted);
-}
+    .btn-camera {
+      width: 100%;
+      padding: 1rem;
+      background: var(--ink);
+      color: white;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+    }
 
-.queue-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 4px;
-}
+    .btn-gallery {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      border-radius: 2px;
+      cursor: pointer;
+    }
 
-.progress-track {
-  height: 2px;
-  background: var(--border);
-  margin-top: 1rem;
-  display: none;
-}
+    .or-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1rem 0;
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
 
-.progress-track.active { display: block; }
+    .or-row::before,
+    .or-row::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
 
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: var(--gold);
-}
+    /* Preview section (UNCHANGED VISUAL STRUCTURE) */
+    .preview-section {
+      display: none;
+      margin-top: 1.75rem;
+      flex-direction: column;
+      gap: 1rem;
+      text-align: left;
+    }
 
-.status {
-  margin-top: 1rem;
-  font-size: 0.82rem;
-  display: none;
-}
+    .preview-section.visible {
+      display: flex;
+    }
 
-.status.visible { display: block; }
+    .queue {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
 
-.success {
-  color: var(--success);
-  background: var(--success-bg);
-  padding: 0.75rem;
-  border: 1px solid #c3dbc9;
-}
+    .queue-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
 
-.error {
-  color: #a03820;
-  background: #fdf0ed;
-  padding: 0.75rem;
-  border: 1px solid #f0c4b8;
-}
+    .progress-track {
+      height: 2px;
+      background: var(--border);
+      display: none;
+    }
 
-.footer {
-  margin-top: 1rem;
-  font-size: 0.7rem;
-  color: var(--muted);
-}
-</style>
+    .progress-track.active {
+      display: block;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--gold);
+    }
+
+    .status-uploading,
+    .status-success,
+    .status-error {
+      display: none;
+      font-size: 0.82rem;
+    }
+
+    .status-uploading.visible,
+    .status-success.visible,
+    .status-error.visible {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-success {
+      background: var(--success-bg);
+      color: var(--success);
+      padding: 0.75rem;
+      border: 1px solid #c3dbc9;
+    }
+
+    .status-error {
+      background: #fdf0ed;
+      color: #a03820;
+      padding: 0.75rem;
+      border: 1px solid #f0c4b8;
+    }
+
+    .footer {
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="flourish">
-  <svg viewBox="0 0 120 40" fill="none">
-    <circle cx="40" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
-    <circle cx="80" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
-  </svg>
-</div>
-
-<div class="card">
-  <h1>A <em>Memory</em></h1>
-  <p class="subtext">Upload your moments 💍</p>
-  <div class="divider-line"></div>
-
-  <input type="file" id="camera-input" accept="image/*" capture="environment" multiple />
-  <input type="file" id="gallery-input" accept="image/*" multiple />
-
-  <button class="btn-camera" onclick="cameraInput.click()">Take Photo(s)</button>
-  <button class="btn-gallery" onclick="galleryInput.click()">Upload from gallery</button>
-
-  <div class="queue" id="queue"></div>
-
-  <div class="progress-track" id="track">
-    <div class="progress-fill" id="fill"></div>
+  <div class="flourish">
+    <svg viewBox="0 0 120 40" fill="none">
+      <circle cx="40" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
+      <circle cx="80" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
+    </svg>
   </div>
 
-  <div class="status success" id="success">All photos uploaded 🎉</div>
-  <div class="status error" id="error">Some uploads failed</div>
-</div>
+  <div class="card">
+    <p class="eyebrow">You're invited to share</p>
+    <h1>A <em>memory</em></h1>
+    <p class="names">Ine & Simon · 13th June 2026</p>
+    <div class="divider-line"></div>
 
-<p class="footer">Made with love</p>
+    <p class="subtext">Upload your memories 💍</p>
+
+    <input type="file" id="camera-input" accept="image/*" capture="environment" multiple />
+    <input type="file" id="gallery-input" accept="image/*" multiple />
+
+    <button class="btn-camera" onclick="cameraInput.click()">Take Photo(s)</button>
+
+    <div class="or-row">or</div>
+
+    <button class="btn-gallery" onclick="galleryInput.click()">Upload from gallery</button>
+
+    <div class="preview-section" id="preview-section">
+
+      <div class="queue" id="queue"></div>
+
+      <div class="progress-track" id="track">
+        <div class="progress-fill" id="fill"></div>
+      </div>
+
+      <div class="status-success" id="success">All photos uploaded 🎉</div>
+      <div class="status-error" id="error">Some uploads failed</div>
+    </div>
+  </div>
+
+  <p class="footer">Made with love by Simon De Roeck</p>
 
 <script>
 const CLOUD_NAME = 'dzvstnapa';
@@ -221,77 +299,74 @@ const URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 const cameraInput = document.getElementById('camera-input');
 const galleryInput = document.getElementById('gallery-input');
 
-const queueEl = document.getElementById('queue');
+const queue = document.getElementById('queue');
 const fill = document.getElementById('fill');
 const track = document.getElementById('track');
 const success = document.getElementById('success');
 const error = document.getElementById('error');
+const preview = document.getElementById('preview-section');
 
 function reset() {
-  queueEl.innerHTML = '';
+  queue.innerHTML = '';
   fill.style.width = '0%';
   success.classList.remove('visible');
   error.classList.remove('visible');
 }
 
-function renderQueue(files) {
-  queueEl.innerHTML = '';
+function render(files) {
+  queue.innerHTML = '';
   files.forEach(f => {
     const div = document.createElement('div');
     div.className = 'queue-item';
     div.innerHTML = `<span>${f.name}</span><span>waiting</span>`;
-    queueEl.appendChild(div);
+    queue.appendChild(div);
   });
 }
 
-async function uploadFiles(files) {
+async function upload(files) {
   reset();
+  preview.classList.add('visible');
   track.classList.add('active');
 
-  const list = [...files];
-  renderQueue(list);
+  const arr = [...files];
+  render(arr);
 
-  let done = 0;
   let failed = 0;
 
-  for (let i = 0; i < list.length; i++) {
-    const file = list[i];
-    const row = queueEl.children[i];
+  for (let i = 0; i < arr.length; i++) {
+    const file = arr[i];
+    const row = queue.children[i];
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', UPLOAD_PRESET);
-      formData.append('tags', 'wedding');
-      formData.append('folder', 'wedding');
+      const form = new FormData();
+      form.append('file', file);
+      form.append('upload_preset', UPLOAD_PRESET);
+      form.append('tags', 'wedding');
+      form.append('folder', 'wedding');
 
-      const res = await fetch(URL, { method: 'POST', body: formData });
+      const res = await fetch(URL, { method: 'POST', body: form });
       const json = await res.json();
 
       if (!json.secure_url) throw new Error();
 
       row.children[1].textContent = 'done';
-      done++;
 
     } catch {
       row.children[1].textContent = 'failed';
       failed++;
     }
 
-    fill.style.width = ((i + 1) / list.length) * 100 + '%';
+    fill.style.width = ((i + 1) / arr.length) * 100 + '%';
   }
 
   track.classList.remove('active');
 
-  if (failed === 0) {
-    success.classList.add('visible');
-  } else {
-    error.classList.add('visible');
-  }
+  if (failed === 0) success.classList.add('visible');
+  else error.classList.add('visible');
 }
 
-cameraInput.addEventListener('change', e => uploadFiles(e.target.files));
-galleryInput.addEventListener('change', e => uploadFiles(e.target.files));
+cameraInput.addEventListener('change', e => upload(e.target.files));
+galleryInput.addEventListener('change', e => upload(e.target.files));
 </script>
 
 </body>
