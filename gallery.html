@@ -37,7 +37,7 @@
       content: '';
       position: fixed;
       inset: 0;
-      background: url('background.jpg') center center / cover no-repeat;
+      background: url('background.jpg') center/cover no-repeat;
       filter: blur(12px);
       transform: scale(1.05);
       z-index: -1;
@@ -99,19 +99,14 @@
       opacity: 0.5;
     }
 
-    /* 🧱 MASONRY LAYOUT */
+    /* MASONRY */
     .masonry {
       column-count: 3;
       column-gap: 12px;
     }
 
-    @media (max-width: 900px) {
-      .masonry { column-count: 2; }
-    }
-
-    @media (max-width: 600px) {
-      .masonry { column-count: 1; }
-    }
+    @media (max-width: 900px) { .masonry { column-count: 2; } }
+    @media (max-width: 600px) { .masonry { column-count: 1; } }
 
     .photo {
       break-inside: avoid;
@@ -120,11 +115,6 @@
       overflow: hidden;
       border: 1px solid var(--border);
       background: var(--gold-light);
-      transition: transform 0.2s ease;
-    }
-
-    .photo:hover {
-      transform: scale(1.01);
     }
 
     .photo img {
@@ -135,71 +125,127 @@
     .loading {
       text-align: center;
       color: var(--muted);
-      font-size: 0.85rem;
       padding: 2rem;
     }
 
-    .footer {
+    /* 🔐 LOCK SCREEN */
+    .lock-screen {
+      position: fixed;
+      inset: 0;
+      background: rgba(253, 249, 244, 0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .lock-box {
       text-align: center;
-      margin-top: 2rem;
-      font-size: 0.7rem;
-      color: var(--muted);
+      max-width: 300px;
+    }
+
+    .lock-box h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+    }
+
+    .lock-box input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+
+    .lock-box button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border: none;
+      background: var(--ink);
+      color: white;
+      cursor: pointer;
+    }
+
+    .error {
+      color: #a03820;
+      font-size: 0.8rem;
+      margin-top: 10px;
+      display: none;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="flourish">
-    <svg viewBox="0 0 120 40" fill="none">
-      <circle cx="40" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
-      <circle cx="80" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
-    </svg>
+<!-- 🔐 LOCK SCREEN -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-box">
+    <h2>Private Gallery</h2>
+    <p style="color:#9c8e86;font-size:0.85rem;">Enter passcode</p>
+
+    <input type="password" id="passcode" placeholder="Passcode" />
+    <button onclick="unlock()">Enter</button>
+
+    <div class="error" id="error">Wrong passcode</div>
   </div>
+</div>
 
-  <div class="card">
-    <h1>A <em>Memory</em> Gallery</h1>
-    <p class="subtext">Captured moments 💍</p>
-    <div class="divider-line"></div>
+<div class="flourish">
+  <svg viewBox="0 0 120 40" fill="none">
+    <circle cx="40" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
+    <circle cx="80" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
+  </svg>
+</div>
 
-    <div class="loading" id="loading">Loading memories...</div>
-    <div class="masonry" id="masonry"></div>
+<div class="card">
+  <h1>A <em>Memory</em> Gallery</h1>
+  <p class="subtext">Captured moments 💍</p>
+  <div class="divider-line"></div>
 
-    <p class="footer">Made with love by Simon De Roeck</p>
-  </div>
+  <div class="loading" id="loading">Unlock to load memories</div>
+  <div class="masonry" id="masonry"></div>
+</div>
 
 <script>
 const CLOUD_NAME = "dzvstnapa";
 const TAG = "wedding";
+const PASSCODE = "chickennugget"; // 👈 CHANGE THIS
 
 const SEARCH_URL =
   `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${TAG}.json`;
 
-let isRendering = false;
+let unlocked = false;
+
+function unlock() {
+  const input = document.getElementById("passcode").value;
+  const error = document.getElementById("error");
+
+  if (input !== PASSCODE) {
+    error.style.display = "block";
+    return;
+  }
+
+  document.getElementById("lockScreen").style.display = "none";
+  unlocked = true;
+  loadImages();
+}
 
 async function loadImages() {
-  if (isRendering) return;
-  isRendering = true;
+  if (!unlocked) return;
 
   try {
     const res = await fetch(SEARCH_URL);
-    if (!res.ok) throw new Error("Cloudinary list failed");
-
     const data = await res.json();
 
     const masonry = document.getElementById("masonry");
     const loading = document.getElementById("loading");
 
-    // clear old content (prevents duplicates)
     masonry.innerHTML = "";
-
     loading.style.display = "none";
-
-    if (!data.resources || data.resources.length === 0) {
-      loading.innerText = "No memories yet 💛";
-      loading.style.display = "block";
-      return;
-    }
 
     const seen = new Set();
 
@@ -213,29 +259,24 @@ async function loadImages() {
         const url =
           `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${img.public_id}.${img.format}`;
 
-        const wrapper = document.createElement("div");
-        wrapper.className = "photo";
+        const div = document.createElement("div");
+        div.className = "photo";
 
         const image = document.createElement("img");
         image.src = url;
         image.loading = "lazy";
 
-        wrapper.appendChild(image);
-        masonry.appendChild(wrapper);
+        div.appendChild(image);
+        masonry.appendChild(div);
       });
 
   } catch (err) {
-    console.error(err);
     document.getElementById("loading").innerText =
       "Failed to load gallery.";
-  } finally {
-    isRendering = false;
   }
 }
 
-loadImages();
-
-// live refresh
+// optional live refresh after unlock
 setInterval(loadImages, 8000);
 </script>
 
