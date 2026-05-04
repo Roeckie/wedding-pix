@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wedding Gallery 💍</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fdf9f4;
+      color: #2c2420;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-weight: 300;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      padding: 1rem;
+    }
+
+    .img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 6px;
+      background: #eee;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #9c8e86;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Wedding Gallery 💍</h1>
+</header>
+
+<div class="loading" id="loading">Loading photos...</div>
+<div class="grid" id="grid"></div>
+
+<script>
+const CLOUD_NAME = "dzvstnapa";
+
+// Cloudinary "tag search" endpoint (no secret needed)
+const URL = `https://res.cloudinary.com/${CLOUD_NAME}/image/list/wedding.json`;
+
+async function loadImages() {
+  try {
+    const res = await fetch(URL);
+    const data = await res.json();
+
+    const grid = document.getElementById("grid");
+    const loading = document.getElementById("loading");
+
+    loading.style.display = "none";
+
+    if (!data.resources || data.resources.length === 0) {
+      loading.innerText = "No photos yet.";
+      loading.style.display = "block";
+      return;
+    }
+
+    data.resources.forEach(img => {
+      const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${img.public_id}.${img.format}`;
+
+      const image = document.createElement("img");
+      image.src = url;
+      image.className = "img";
+
+      grid.appendChild(image);
+    });
+
+  } catch (err) {
+    document.getElementById("loading").innerText =
+      "Failed to load gallery.";
+  }
+}
+
+loadImages();
+</script>
+
+</body>
+</html>
