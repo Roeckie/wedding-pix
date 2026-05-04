@@ -66,7 +66,7 @@
       border: 1px solid var(--border);
       border-radius: 2px;
       padding: 2.5rem 2rem;
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
       box-shadow: 0 4px 24px rgba(44,36,32,0.07);
     }
@@ -99,24 +99,37 @@
       opacity: 0.5;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 10px;
+    /* 🧱 MASONRY LAYOUT */
+    .masonry {
+      column-count: 3;
+      column-gap: 12px;
     }
 
-    .img {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
+    @media (max-width: 900px) {
+      .masonry { column-count: 2; }
+    }
+
+    @media (max-width: 600px) {
+      .masonry { column-count: 1; }
+    }
+
+    .photo {
+      break-inside: avoid;
+      margin-bottom: 12px;
       border-radius: 2px;
+      overflow: hidden;
       border: 1px solid var(--border);
       background: var(--gold-light);
       transition: transform 0.2s ease;
     }
 
-    .img:hover {
-      transform: scale(1.02);
+    .photo:hover {
+      transform: scale(1.01);
+    }
+
+    .photo img {
+      width: 100%;
+      display: block;
     }
 
     .loading {
@@ -146,11 +159,11 @@
 
   <div class="card">
     <h1>A <em>Memory</em> Gallery</h1>
-    <p class="subtext">All captured moments 💍</p>
+    <p class="subtext">Captured moments 💍</p>
     <div class="divider-line"></div>
 
     <div class="loading" id="loading">Loading memories...</div>
-    <div class="grid" id="grid"></div>
+    <div class="masonry" id="masonry"></div>
 
     <p class="footer">Made with love</p>
   </div>
@@ -174,11 +187,11 @@ async function loadImages() {
 
     const data = await res.json();
 
-    const grid = document.getElementById("grid");
+    const masonry = document.getElementById("masonry");
     const loading = document.getElementById("loading");
 
-    // ✅ IMPORTANT FIX: clear old images
-    grid.innerHTML = "";
+    // clear old content (prevents duplicates)
+    masonry.innerHTML = "";
 
     loading.style.display = "none";
 
@@ -200,11 +213,15 @@ async function loadImages() {
         const url =
           `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${img.public_id}.${img.format}`;
 
-        const el = document.createElement("img");
-        el.src = url;
-        el.className = "img";
+        const wrapper = document.createElement("div");
+        wrapper.className = "photo";
 
-        grid.appendChild(el);
+        const image = document.createElement("img");
+        image.src = url;
+        image.loading = "lazy";
+
+        wrapper.appendChild(image);
+        masonry.appendChild(wrapper);
       });
 
   } catch (err) {
@@ -218,7 +235,7 @@ async function loadImages() {
 
 loadImages();
 
-// safe live refresh
+// live refresh
 setInterval(loadImages, 8000);
 </script>
 
