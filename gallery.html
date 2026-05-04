@@ -54,17 +54,11 @@
     .flourish {
       text-align: center;
       margin-bottom: 1.5rem;
-      animation: fadein 0.8s ease forwards;
     }
 
     .flourish svg {
       width: 120px;
       opacity: 0.35;
-    }
-
-    @keyframes fadein {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .card {
@@ -75,7 +69,6 @@
       max-width: 900px;
       margin: 0 auto;
       box-shadow: 0 4px 24px rgba(44,36,32,0.07);
-      animation: fadein 0.8s ease forwards;
     }
 
     h1 {
@@ -106,7 +99,6 @@
       opacity: 0.5;
     }
 
-    /* Gallery grid */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -154,33 +146,39 @@
 
   <div class="card">
     <h1>A <em>Memory</em> Gallery</h1>
-    <p class="subtext">All captured moments from Ine & Simon’s wedding 💍</p>
+    <p class="subtext">All captured moments 💍</p>
     <div class="divider-line"></div>
 
     <div class="loading" id="loading">Loading memories...</div>
     <div class="grid" id="grid"></div>
 
-    <p class="footer">Made with love by Simon De Roeck</p>
+    <p class="footer">Made with love</p>
   </div>
 
 <script>
 const CLOUD_NAME = "dzvstnapa";
 const TAG = "wedding";
 
-// ✅ PROPER FIX: use Cloudinary Search API (works with tags)
 const SEARCH_URL =
   `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${TAG}.json`;
 
+let isRendering = false;
+
 async function loadImages() {
+  if (isRendering) return;
+  isRendering = true;
+
   try {
     const res = await fetch(SEARCH_URL);
-
-    if (!res.ok) throw new Error("Cloudinary list not enabled");
+    if (!res.ok) throw new Error("Cloudinary list failed");
 
     const data = await res.json();
 
     const grid = document.getElementById("grid");
     const loading = document.getElementById("loading");
+
+    // ✅ IMPORTANT FIX: clear old images
+    grid.innerHTML = "";
 
     loading.style.display = "none";
 
@@ -190,27 +188,37 @@ async function loadImages() {
       return;
     }
 
-    data.resources.reverse().forEach(img => {
-      const url =
-        `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${img.public_id}.${img.format}`;
+    const seen = new Set();
 
-      const el = document.createElement("img");
-      el.src = url;
-      el.className = "img";
+    data.resources
+      .slice()
+      .reverse()
+      .forEach(img => {
+        if (seen.has(img.public_id)) return;
+        seen.add(img.public_id);
 
-      grid.appendChild(el);
-    });
+        const url =
+          `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${img.public_id}.${img.format}`;
+
+        const el = document.createElement("img");
+        el.src = url;
+        el.className = "img";
+
+        grid.appendChild(el);
+      });
 
   } catch (err) {
     console.error(err);
     document.getElementById("loading").innerText =
-      "Gallery unavailable. Enable asset listing in Cloudinary.";
+      "Failed to load gallery.";
+  } finally {
+    isRendering = false;
   }
 }
 
 loadImages();
 
-// optional live refresh
+// safe live refresh
 setInterval(loadImages, 8000);
 </script>
 
