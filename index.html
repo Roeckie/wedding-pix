@@ -31,6 +31,25 @@
       align-items: center;
       justify-content: center;
       padding: 2rem 1.25rem 3rem;
+      position: relative;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: url('background.jpg') center center / cover no-repeat;
+      filter: blur(12px);
+      transform: scale(1.05);
+      z-index: -1;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(253, 249, 244, 0.45);
+      z-index: -1;
     }
 
     /* Decorative top flourish */
