@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simon & Ine · Our Wedding Gallery</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
+
+    :root {
+      --cream: #fdf9f4;
+      --white: #ffffff;
+      --gold: #b8966e;
+      --gold-light: #f0e6d8;
+      --ink: #2c2420;
+      --muted: #9c8e86;
+      --border: #e8ddd4;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100dvh;
+      position: relative;
+    }
+
+    /* Blurred background */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: url('background.jpg') center center / cover no-repeat;
+      filter: blur(12px);
+      transform: scale(1.05);
+      z-index: -1;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(253, 249, 244, 0.88);
+      z-index: -1;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 3.5rem 1.5rem 2rem;
+      opacity: 0;
+      animation: fadein 0.8s 0.1s ease forwards;
+    }
+
+    .rings svg { width: 90px; opacity: 0.3; margin-bottom: 1.25rem; }
+
+    .eyebrow {
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+    }
+    h1 em { font-style: italic; color: var(--gold); }
+
+    .date {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .divider-line {
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      margin: 0 auto 1.5rem;
+      opacity: 0.5;
+    }
+
+    .photo-count {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      min-height: 1.2em;
+    }
+
+    /* Nav link back to upload */
+    .nav-upload {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .nav-upload:hover { color: var(--ink); border-color: var(--ink); }
+
+    /* Loading state */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 4rem 1.5rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 300;
+    }
+
+    .spinner {
+      width: 24px; height: 24px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Empty state */
+    .empty {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 4rem 1.5rem;
+      text-align: center;
+      color: var(--muted);
+    }
+    .empty svg { opacity: 0.25; }
+    .empty p { font-size: 0.85rem; font-weight: 300; line-height: 1.6; }
+
+    /* Masonry grid */
+    .gallery {
+      columns: 2;
+      column-gap: 10px;
+      padding: 0 10px 10px;
+      display: none;
+    }
+
+    @media (min-width: 600px)  { .gallery { columns: 3; column-gap: 12px; padding: 0 12px 12px; } }
+    @media (min-width: 900px)  { .gallery { columns: 4; } }
+    @media (min-width: 1200px) { .gallery { columns: 5; } }
+
+    .gallery.visible { display: block; }
+
+    .photo-item {
+      break-inside: avoid;
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 3px;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .photo-item.loaded { opacity: 1; transform: translateY(0); }
+
+    .photo-item img {
+      width: 100%;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .photo-item:hover img { transform: scale(1.03); }
+
+    /* Hover overlay */
+    .photo-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(44, 36, 32, 0);
+      transition: background 0.3s ease;
+    }
+    .photo-item:hover::after { background: rgba(44, 36, 32, 0.12); }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 15, 12, 0.95);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      animation: fadein 0.25s ease;
+    }
+    .lightbox.open { display: flex; }
+
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 90dvh;
+      object-fit: contain;
+      border-radius: 2px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .lightbox-close {
+      position: fixed;
+      top: 1.25rem;
+      right: 1.25rem;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+    .lightbox-prev, .lightbox-next {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: white;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      backdrop-filter: blur(4px);
+      font-size: 1rem;
+    }
+    .lightbox-prev { left: 1rem; }
+    .lightbox-next { right: 1rem; }
+    .lightbox-prev:hover, .lightbox-next:hover { background: rgba(255,255,255,0.18); }
+
+    .lightbox-counter {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.1em;
+    }
+
+    /* Download button in lightbox */
+    .lightbox-download {
+      position: fixed;
+      top: 1.25rem;
+      right: 4.5rem;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .lightbox-download:hover { background: rgba(255,255,255,0.2); }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 300;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="rings">
+      <svg viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
+        <circle cx="80" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <p class="eyebrow">Wedding Album</p>
+    <h1>Simon &amp; <em>Ine</em></h1>
+    <p class="date">13th June 2026</p>
+    <div class="divider-line"></div>
+    <p class="photo-count" id="photo-count">Loading photos…</p>
+    <a href="index.html" class="nav-upload">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      Share a photo
+    </a>
+  </header>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>Loading your memories…</span>
+  </div>
+
+  <div class="empty" id="empty">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#b8966e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+    </svg>
+    <p>No photos yet.<br>Be the first to share a memory!</p>
+    <a href="index.html" class="nav-upload" style="margin-top:0.5rem">Share a photo →</a>
+  </div>
+
+  <div class="error-msg" id="error-msg">Could not load photos. Please try again later.</div>
+
+  <div class="gallery" id="gallery"></div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+    <button class="lightbox-close" id="lb-close">✕</button>
+    <a class="lightbox-download" id="lb-download" download title="Download">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </a>
+    <button class="lightbox-prev" id="lb-prev">‹</button>
+    <button class="lightbox-next" id="lb-next">›</button>
+    <div class="lightbox-counter" id="lb-counter"></div>
+  </div>
+
+  <script>
+    const CLOUD = 'dzvstnapa';
+    const FOLDER = 'wedding';
+
+    let photos = [];
+    let currentIndex = 0;
+
+    async function loadPhotos() {
+      try {
+        // Use Cloudinary's search API via resource list
+        const url = `https://res.cloudinary.com/${CLOUD}/image/list/${FOLDER}.json`;
+        const res = await fetch(url);
+
+        if (!res.ok) throw new Error('Failed to fetch');
+
+        const data = await res.json();
+        const resources = data.resources || [];
+
+        document.getElementById('loading').style.display = 'none';
+
+        if (resources.length === 0) {
+          document.getElementById('empty').style.display = 'flex';
+          document.getElementById('photo-count').textContent = 'No photos yet';
+          return;
+        }
+
+        // Sort newest first
+        resources.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        photos = resources.map(r => ({
+          thumb: `https://res.cloudinary.com/${CLOUD}/image/upload/w_600,q_auto,f_auto/${r.public_id}.jpg`,
+          full:  `https://res.cloudinary.com/${CLOUD}/image/upload/q_auto/${r.public_id}.jpg`,
+          id: r.public_id
+        }));
+
+        document.getElementById('photo-count').textContent =
+          `${photos.length} ${photos.length === 1 ? 'memory' : 'memories'} shared`;
+
+        renderGallery();
+
+      } catch (err) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error-msg').style.display = 'block';
+        document.getElementById('photo-count').textContent = '';
+      }
+    }
+
+    function renderGallery() {
+      const gallery = document.getElementById('gallery');
+      gallery.classList.add('visible');
+
+      photos.forEach((photo, i) => {
+        const item = document.createElement('div');
+        item.className = 'photo-item';
+
+        const img = document.createElement('img');
+        img.src = photo.thumb;
+        img.alt = `Wedding photo ${i + 1}`;
+        img.loading = 'lazy';
+        img.onload = () => {
+          setTimeout(() => item.classList.add('loaded'), i * 40);
+        };
+
+        item.appendChild(img);
+        item.addEventListener('click', () => openLightbox(i));
+        gallery.appendChild(item);
+      });
+    }
+
+    // Lightbox
+    function openLightbox(index) {
+      currentIndex = index;
+      updateLightbox();
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function updateLightbox() {
+      const photo = photos[currentIndex];
+      const img = document.getElementById('lightbox-img');
+      img.src = photo.full;
+      document.getElementById('lb-download').href = photo.full;
+      document.getElementById('lb-counter').textContent =
+        `${currentIndex + 1} / ${photos.length}`;
+    }
+
+    function prevPhoto() {
+      currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+      updateLightbox();
+    }
+
+    function nextPhoto() {
+      currentIndex = (currentIndex + 1) % photos.length;
+      updateLightbox();
+    }
+
+    document.getElementById('lb-close').addEventListener('click', closeLightbox);
+    document.getElementById('lb-prev').addEventListener('click', prevPhoto);
+    document.getElementById('lb-next').addEventListener('click', nextPhoto);
+
+    document.getElementById('lightbox').addEventListener('click', e => {
+      if (e.target === document.getElementById('lightbox')) closeLightbox();
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', e => {
+      if (!document.getElementById('lightbox').classList.contains('open')) return;
+      if (e.key === 'ArrowLeft')  prevPhoto();
+      if (e.key === 'ArrowRight') nextPhoto();
+      if (e.key === 'Escape')     closeLightbox();
+    });
+
+    loadPhotos();
+  </script>
+</body>
+</html>
