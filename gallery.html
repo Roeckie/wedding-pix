@@ -354,8 +354,8 @@
     async function loadPhotos() {
       try {
         // Use Cloudinary's search API via resource list
-        const url = `https://res.cloudinary.com/${CLOUD}/image/list/${FOLDER}.json`;
-        const res = await fetch(url);
+        const res = await fetch('/api/photos');
+        const resources = await res.json();
 
         if (!res.ok) throw new Error('Failed to fetch');
 
