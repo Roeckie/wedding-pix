@@ -1,423 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Share a Memory 💍</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Share a Memory 💍</title>
 
-    :root {
-      --cream: #fdf9f4;
-      --white: #ffffff;
-      --gold: #b8966e;
-      --gold-light: #f0e6d8;
-      --ink: #2c2420;
-      --muted: #9c8e86;
-      --border: #e8ddd4;
-      --success: #4a7c59;
-      --success-bg: #edf4ef;
-    }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream: #fdf9f4;
+  --white: #ffffff;
+  --gold: #b8966e;
+  --gold-light: #f0e6d8;
+  --ink: #2c2420;
+  --muted: #9c8e86;
+  --border: #e8ddd4;
+  --success: #4a7c59;
+  --success-bg: #edf4ef;
+}
 
-    body {
-      font-family: 'Jost', sans-serif;
-      background: var(--cream);
-      color: var(--ink);
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1.25rem 3rem;
-      position: relative;
-    }
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: url('background.jpg') center center / cover no-repeat;
-      filter: blur(12px);
-      transform: scale(1.05);
-      z-index: -1;
-    }
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem 3rem;
+  position: relative;
+}
 
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: rgba(253, 249, 244, 0.45);
-      z-index: -1;
-    }
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url('background.jpg') center / cover no-repeat;
+  filter: blur(12px);
+  transform: scale(1.05);
+  z-index: -1;
+}
 
-    .flourish {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: fadein 1s 0.1s ease forwards;
-    }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(253, 249, 244, 0.45);
+  z-index: -1;
+}
 
-    .flourish svg { width: 120px; opacity: 0.35; }
+.flourish {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  opacity: 0.35;
+}
 
-    .card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 2.5rem 2rem;
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
-      box-shadow: 0 4px 24px rgba(44,36,32,0.07);
-      opacity: 0;
-      animation: fadein 0.8s 0.2s ease forwards;
-    }
+.flourish svg { width: 120px; }
 
-    @keyframes fadein {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(44,36,32,0.07);
+}
 
-    .eyebrow {
-      font-size: 0.65rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 500;
-      margin-bottom: 0.75rem;
-    }
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.6rem;
+  font-weight: 300;
+  margin-bottom: 0.4rem;
+}
 
-    h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.6rem;
-      font-weight: 300;
-      line-height: 1.15;
-      color: var(--ink);
-      margin-bottom: 0.4rem;
-    }
+h1 em { color: var(--gold); }
 
-    h1 em {
-      font-style: italic;
-      color: var(--gold);
-    }
+.subtext {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
 
-    .names {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem;
-      font-style: italic;
-      color: var(--muted);
-      margin-bottom: 0.5rem;
-    }
+.divider-line {
+  width: 48px;
+  height: 1px;
+  background: var(--gold);
+  margin: 0 auto 2rem;
+  opacity: 0.5;
+}
 
-    .subtext {
-      font-size: 0.82rem;
-      color: var(--muted);
-      line-height: 1.65;
-      font-weight: 300;
-      margin-bottom: 1rem;
-    }
+#camera-input, #gallery-input {
+  display: none;
+}
 
-    .divider-line {
-      width: 48px;
-      height: 1px;
-      background: var(--gold);
-      margin: 0 auto 2rem;
-      opacity: 0.5;
-    }
+.btn-camera, .btn-gallery {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 2px;
+  cursor: pointer;
+}
 
-    #camera-input, #gallery-input { display: none; }
+.btn-camera {
+  background: var(--ink);
+  color: white;
+  border: none;
+}
 
-    .btn-camera {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      width: 100%;
-      padding: 1rem 1.5rem;
-      background: var(--ink);
-      color: white;
-      border: none;
-      border-radius: 2px;
-      font-family: 'Jost', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 400;
-      letter-spacing: 0.06em;
-      cursor: pointer;
-    }
+.btn-gallery {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  margin-top: 10px;
+}
 
-    .btn-gallery {
-      width: 100%;
-      padding: 0.75rem 1.5rem;
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      font-size: 0.82rem;
-      cursor: pointer;
-    }
+.queue {
+  text-align: left;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
 
-    .or-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin: 1rem 0;
-      color: var(--muted);
-      font-size: 0.72rem;
-    }
+.queue-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
 
-    .or-row::before, .or-row::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
+.progress-track {
+  height: 2px;
+  background: var(--border);
+  margin-top: 1rem;
+  display: none;
+}
 
-    .preview-section {
-      display: none;
-      margin-top: 1.75rem;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .preview-section.visible { display: flex; }
+.progress-track.active { display: block; }
 
-    .preview-wrap {
-      border-radius: 2px;
-      overflow: hidden;
-      background: var(--gold-light);
-      aspect-ratio: 4/3;
-    }
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--gold);
+}
 
-    .preview-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+.status {
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  display: none;
+}
 
-    .progress-track {
-      height: 2px;
-      background: var(--border);
-      display: none;
-    }
-    .progress-track.active { display: block; }
+.status.visible { display: block; }
 
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--gold);
-    }
+.success {
+  color: var(--success);
+  background: var(--success-bg);
+  padding: 0.75rem;
+  border: 1px solid #c3dbc9;
+}
 
-    .status-uploading,
-    .status-success,
-    .status-error {
-      display: none;
-      font-size: 0.82rem;
-    }
+.error {
+  color: #a03820;
+  background: #fdf0ed;
+  padding: 0.75rem;
+  border: 1px solid #f0c4b8;
+}
 
-    .status-uploading.visible,
-    .status-success.visible,
-    .status-error.visible {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .status-success {
-      background: var(--success-bg);
-      color: var(--success);
-      padding: 0.75rem 1rem;
-      border: 1px solid #c3dbc9;
-    }
-
-    .status-error {
-      background: #fdf0ed;
-      color: #a03820;
-      padding: 0.75rem 1rem;
-      border: 1px solid #f0c4b8;
-    }
-
-    .spinner {
-      width: 14px;
-      height: 14px;
-      border: 2px solid var(--border);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .btn-another {
-      background: none;
-      border: none;
-      font-size: 0.78rem;
-      color: var(--muted);
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    .footer {
-      margin-top: 1rem;
-      font-size: 0.7rem;
-      color: var(--muted);
-      text-align: center;
-    }
-  </style>
+.footer {
+  margin-top: 1rem;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+</style>
 </head>
 
 <body>
 
-  <div class="flourish">
-    <svg viewBox="0 0 120 40" fill="none">
-      <circle cx="40" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
-      <circle cx="80" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
-    </svg>
+<div class="flourish">
+  <svg viewBox="0 0 120 40" fill="none">
+    <circle cx="40" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
+    <circle cx="80" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
+  </svg>
+</div>
+
+<div class="card">
+  <h1>A <em>Memory</em></h1>
+  <p class="subtext">Upload your moments 💍</p>
+  <div class="divider-line"></div>
+
+  <input type="file" id="camera-input" accept="image/*" capture="environment" multiple />
+  <input type="file" id="gallery-input" accept="image/*" multiple />
+
+  <button class="btn-camera" onclick="cameraInput.click()">Take Photo(s)</button>
+  <button class="btn-gallery" onclick="galleryInput.click()">Upload from gallery</button>
+
+  <div class="queue" id="queue"></div>
+
+  <div class="progress-track" id="track">
+    <div class="progress-fill" id="fill"></div>
   </div>
 
-  <div class="card">
-    <p class="eyebrow">You're invited to share</p>
-    <h1>A <em>memory</em><br>from today</h1>
-    <p class="names">Ine & Simon · 13th June 2026</p>
-    <div class="divider-line"></div>
-    <p class="subtext">Help ons deze avond nooit te vergeten!</p>
-    <p class="subtext">Neem of upload een foto, geen app of account nodig!</p>
+  <div class="status success" id="success">All photos uploaded 🎉</div>
+  <div class="status error" id="error">Some uploads failed</div>
+</div>
 
-    <input type="file" id="camera-input" accept="image/*" capture="environment" />
-    <input type="file" id="gallery-input" accept="image/*" />
-
-    <button class="btn-camera" onclick="cameraInput.click()">Take a Photo</button>
-
-    <div class="or-row">or</div>
-
-    <button class="btn-gallery" onclick="galleryInput.click()">Upload from gallery</button>
-
-    <div class="preview-section" id="preview-section">
-      <div class="preview-wrap">
-        <img id="preview-img" />
-      </div>
-
-      <div class="progress-track" id="progress-track">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
-
-      <div class="status-uploading" id="status-uploading">
-        <div class="spinner"></div> Uploading your photo…
-      </div>
-
-      <div class="status-success" id="status-success">
-        ✅ Saved to the album — thank you!
-      </div>
-
-      <div class="status-error" id="status-error">
-        <span id="error-msg">Upload failed. Please try again.</span>
-      </div>
-
-      <button class="btn-another" id="btn-another">Share another photo</button>
-    </div>
-  </div>
-
-  <p class="footer">Foto's gaan rechtstreeks naar een Google Drive folder!</p>
-  <p class="footer">Made with love by Simon De Roeck</p>
+<p class="footer">Made with love</p>
 
 <script>
 const CLOUD_NAME = 'dzvstnapa';
 const UPLOAD_PRESET = 'rn2ysjxt';
-const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+const URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
 const cameraInput = document.getElementById('camera-input');
 const galleryInput = document.getElementById('gallery-input');
 
-const previewSection = document.getElementById('preview-section');
-const previewImg = document.getElementById('preview-img');
+const queueEl = document.getElementById('queue');
+const fill = document.getElementById('fill');
+const track = document.getElementById('track');
+const success = document.getElementById('success');
+const error = document.getElementById('error');
 
-const progressTrack = document.getElementById('progress-track');
-const progressFill = document.getElementById('progress-fill');
-
-const statusUploading = document.getElementById('status-uploading');
-const statusSuccess = document.getElementById('status-success');
-const statusError = document.getElementById('status-error');
-const errorMsg = document.getElementById('error-msg');
-
-const btnAnother = document.getElementById('btn-another');
-
-function resetStatus() {
-  progressTrack.classList.remove('active');
-  progressFill.style.width = '0%';
-  statusUploading.classList.remove('visible');
-  statusSuccess.classList.remove('visible');
-  statusError.classList.remove('visible');
+function reset() {
+  queueEl.innerHTML = '';
+  fill.style.width = '0%';
+  success.classList.remove('visible');
+  error.classList.remove('visible');
 }
 
-function handleFile(file) {
-  if (!file) return;
-
-  resetStatus();
-
-  const reader = new FileReader();
-  reader.onload = e => {
-    previewImg.src = e.target.result;
-    previewSection.classList.add('visible');
-    uploadFile(file);
-  };
-  reader.readAsDataURL(file);
+function renderQueue(files) {
+  queueEl.innerHTML = '';
+  files.forEach(f => {
+    const div = document.createElement('div');
+    div.className = 'queue-item';
+    div.innerHTML = `<span>${f.name}</span><span>waiting</span>`;
+    queueEl.appendChild(div);
+  });
 }
 
-async function uploadFile(file) {
-  resetStatus();
-  progressTrack.classList.add('active');
-  statusUploading.classList.add('visible');
+async function uploadFiles(files) {
+  reset();
+  track.classList.add('active');
 
-  let progress = 0;
-  const interval = setInterval(() => {
-    progress += Math.random() * 15;
-    if (progress > 85) progress = 85;
-    progressFill.style.width = progress + '%';
-  }, 250);
+  const list = [...files];
+  renderQueue(list);
 
-  try {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', UPLOAD_PRESET);
-    formData.append('tags', 'wedding');
-    formData.append('folder', 'wedding');
+  let done = 0;
+  let failed = 0;
 
-    const res = await fetch(CLOUDINARY_URL, {
-      method: 'POST',
-      body: formData
-    });
+  for (let i = 0; i < list.length; i++) {
+    const file = list[i];
+    const row = queueEl.children[i];
 
-    const json = await res.json();
-    if (!json.secure_url) throw new Error('Upload failed');
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', UPLOAD_PRESET);
+      formData.append('tags', 'wedding');
+      formData.append('folder', 'wedding');
 
-    clearInterval(interval);
-    progressFill.style.width = '100%';
+      const res = await fetch(URL, { method: 'POST', body: formData });
+      const json = await res.json();
 
-    setTimeout(() => {
-      progressTrack.classList.remove('active');
-      statusUploading.classList.remove('visible');
-      statusSuccess.classList.add('visible');
-    }, 300);
+      if (!json.secure_url) throw new Error();
 
-  } catch (err) {
-    clearInterval(interval);
-    progressTrack.classList.remove('active');
-    statusUploading.classList.remove('visible');
+      row.children[1].textContent = 'done';
+      done++;
 
-    errorMsg.textContent = 'Upload failed. Please try again.';
-    statusError.classList.add('visible');
+    } catch {
+      row.children[1].textContent = 'failed';
+      failed++;
+    }
+
+    fill.style.width = ((i + 1) / list.length) * 100 + '%';
+  }
+
+  track.classList.remove('active');
+
+  if (failed === 0) {
+    success.classList.add('visible');
+  } else {
+    error.classList.add('visible');
   }
 }
 
-cameraInput.addEventListener('change', e => handleFile(e.target.files[0]));
-galleryInput.addEventListener('change', e => handleFile(e.target.files[0]));
-
-btnAnother.addEventListener('click', () => {
-  cameraInput.value = '';
-  galleryInput.value = '';
-  previewSection.classList.remove('visible');
-  previewImg.src = '';
-  resetStatus();
-});
+cameraInput.addEventListener('change', e => uploadFiles(e.target.files));
+galleryInput.addEventListener('change', e => uploadFiles(e.target.files));
 </script>
 
 </body>
