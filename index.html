@@ -378,6 +378,7 @@ async function uploadFile(file) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('tags', 'wedding');
     formData.append('folder', 'wedding');
 
     const res = await fetch(CLOUDINARY_URL, {
