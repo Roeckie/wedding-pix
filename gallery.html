@@ -6,64 +6,177 @@
   <title>Wedding Gallery 💍</title>
 
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fdf9f4;
-      color: #2c2420;
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
+
+    :root {
+      --cream: #fdf9f4;
+      --white: #ffffff;
+      --gold: #b8966e;
+      --gold-light: #f0e6d8;
+      --ink: #2c2420;
+      --muted: #9c8e86;
+      --border: #e8ddd4;
     }
 
-    header {
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100dvh;
+      padding: 2rem 1.25rem;
+      position: relative;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: url('background.jpg') center center / cover no-repeat;
+      filter: blur(12px);
+      transform: scale(1.05);
+      z-index: -1;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(253, 249, 244, 0.45);
+      z-index: -1;
+    }
+
+    .flourish {
       text-align: center;
-      padding: 2rem 1rem;
+      margin-bottom: 1.5rem;
+      animation: fadein 0.8s ease forwards;
+    }
+
+    .flourish svg {
+      width: 120px;
+      opacity: 0.35;
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 2.5rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      box-shadow: 0 4px 24px rgba(44,36,32,0.07);
+      animation: fadein 0.8s ease forwards;
     }
 
     h1 {
-      margin: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.6rem;
       font-weight: 300;
+      text-align: center;
+      margin-bottom: 0.5rem;
     }
 
+    h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .subtext {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+    .divider-line {
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+      margin: 0 auto 2rem;
+      opacity: 0.5;
+    }
+
+    /* Gallery grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 10px;
-      padding: 1rem;
     }
 
     .img {
       width: 100%;
       aspect-ratio: 1 / 1;
       object-fit: cover;
-      border-radius: 6px;
-      background: #eee;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      background: var(--gold-light);
+      transition: transform 0.2s ease;
+    }
+
+    .img:hover {
+      transform: scale(1.02);
     }
 
     .loading {
       text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
       padding: 2rem;
-      color: #9c8e86;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.7rem;
+      color: var(--muted);
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>Wedding Gallery 💍</h1>
-</header>
+  <div class="flourish">
+    <svg viewBox="0 0 120 40" fill="none">
+      <circle cx="40" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
+      <circle cx="80" cy="20" r="17" stroke="#b8966e" stroke-width="1.5"/>
+    </svg>
+  </div>
 
-<div class="loading" id="loading">Loading photos...</div>
-<div class="grid" id="grid"></div>
+  <div class="card">
+    <h1>A <em>Memory</em> Gallery</h1>
+    <p class="subtext">All captured moments from Ine & Simon’s wedding 💍</p>
+    <div class="divider-line"></div>
+
+    <div class="loading" id="loading">Loading memories...</div>
+    <div class="grid" id="grid"></div>
+
+    <p class="footer">Made with love by Simon De Roeck</p>
+  </div>
 
 <script>
 const CLOUD_NAME = "dzvstnapa";
+const TAG = "wedding";
 
-// Cloudinary "tag search" endpoint (no secret needed)
-const URL = `https://res.cloudinary.com/${CLOUD_NAME}/image/list/wedding.json`;
+// ✅ PROPER FIX: use Cloudinary Search API (works with tags)
+const SEARCH_URL =
+  `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${TAG}.json`;
 
 async function loadImages() {
   try {
-    const res = await fetch(URL);
+    const res = await fetch(SEARCH_URL);
+
+    if (!res.ok) throw new Error("Cloudinary list not enabled");
+
     const data = await res.json();
 
     const grid = document.getElementById("grid");
@@ -72,28 +185,33 @@ async function loadImages() {
     loading.style.display = "none";
 
     if (!data.resources || data.resources.length === 0) {
-      loading.innerText = "No photos yet.";
+      loading.innerText = "No memories yet 💛";
       loading.style.display = "block";
       return;
     }
 
-    data.resources.forEach(img => {
-      const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${img.public_id}.${img.format}`;
+    data.resources.reverse().forEach(img => {
+      const url =
+        `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${img.public_id}.${img.format}`;
 
-      const image = document.createElement("img");
-      image.src = url;
-      image.className = "img";
+      const el = document.createElement("img");
+      el.src = url;
+      el.className = "img";
 
-      grid.appendChild(image);
+      grid.appendChild(el);
     });
 
   } catch (err) {
+    console.error(err);
     document.getElementById("loading").innerText =
-      "Failed to load gallery.";
+      "Gallery unavailable. Enable asset listing in Cloudinary.";
   }
 }
 
 loadImages();
+
+// optional live refresh
+setInterval(loadImages, 8000);
 </script>
 
 </body>
